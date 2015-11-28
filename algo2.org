@@ -190,3 +190,60 @@ Für jede Ecke p
 - Jede Ecke hat Knotengrad 3 (Mehrfachpunkte und degenerierte Kanten, falls das nicht der Fall ist)
 - O(nlogn) erwartet
 - Asymptotisch O(n^2)
+* Distanzprobleme
+- Solve all your problems by magic
+  - NN
+  - maximaler leerer Kreis
+  - minimaler Spannbaum
+  - kürzeste Rundreise
+  - Bewegungsplanung
+  - Triangulierung mit maximalem kleinsten Winkel
+  - Uniforme Verteilung von Punkten oder isotrope Parkettierung
+  - Bestimmung der medialen Achse (Skelett) eines Gebiets/Objekts
+** Voronoi-Diagramma
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-3.pdf::2][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-3.pdf]]
+- P≔{p_{1},…,p_{n}}⊂ℝ^{2}
+- Voronoigebiet eines der p_{i} bezüglich P ist
+  - V_{i}≔{x∈ℝ^{2}|∀j=1,…,n: ‖x-p_{i}‖_{2}≤‖x-p_{j}‖_{2}}
+  - V_{i} konvex, da Schnitt der Halbebenen,
+    H_{ij}≔{x∈ℝ^{2}|‖x-p_{i}‖_{2}≤‖x-p_{j}‖_{2}}
+- Kanten der V_{i} bilden Voronidiagramm V(P)
+- Schneiden sich 3-Voronigebiete V_{i_{0}},V_{i_{1}} und V_{i_{2}} in
+  einem Punkt q, liegen p_{i_{0}}, p_{i_{1}} und p_{i_{2}} auf einem
+  Kreis mit Mittelpunkt q
+  - Solch ein Kreis heißt V-Kreis und der Mittelpunkt V-Knoten
+  - Voronoikreis ist leer, offene Kreisscheibe enthält kein p_{j}
+** Delaunay-Triangulierungen
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-3.pdf::4][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-3.pdf]]
+- Delaunay-Triangulierung :(P) von P={p_{1},…,p_{h}}⊂ℝ^{2} hat Kantenmenge
+  - {p_{i}p_{j} | V_{i}∩V_{j} ist Kante des Voroni-Diagramms V(P)}
+  - Dualgraph zu V(P)
+- Annahme: Jeder Voronikreis gehe nur durch 3 Punkte
+- Die zu den V-Knoten dualen Gebiete von D(P) sind disjunkte Dreiecke
+  die die kovexe Hülle [P] zerlegen
+** Eigenschaften von Delaunaytriangulierungen
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-3.pdf::6][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-3.pdf]]
+- Leere Umkreiseigenschaft
+  - Eine Triangulierung von P ist genau dann Teil von D(P), wenn Umkreise der Dreiecke leer sind
+- Paraboloideigenschaft
+  - Rotationsparaboloid R definiert durch z(x,y)=x^2+y^2
+  - Q≔{[p_{i},z(p_{i})]|i=1,…,n}
+  - Projeziert man den unteren Teil der konvexen Hülle [Q] orthogonal auf die xy-Ebene, erhält man D(P)
+  - D(P) kann mit Algorithmus konvexe Hülle und mittlerem Aufwand ∈O(nlogn) berechnet werden
+  - Kanten einer Triangulierung von Q sind konvex (Tal) oder konkav
+    (Berg), ersetz successiv in konkave durch konvexe Kanten
+- Winkeleigenschaft
+  - Der kleinste Winkel einer Triangulierung eines Vierecks ist für
+    die DT größer als für die andere Triangulierung
+** Nächste Nachbarn
+- In einer Punktmenge {p_1,…,p_n} ist jeder Punkt p_i mit seinem
+  Nächsten Nachbarn durch eine Delaunay-Kante verbunden, da
+  - 1/2(p_{i}+p_{j})∈V_{i}∩V_{j}, weswegen V_{i} und V_{j} benachbart
+    sind
+  - Kennt man die Delaunay-Triangulierung können die nächsten Nachbarn
+    aller p_{i} mit einem Aufwand in O(n) bestimmt werden
+** Minimaler Spannbaum
+- Minimale Spannbäume von P liegen auf D(P)
+** kürzeste Rundreise
+- Rundweg um einen minimalen Spannbaum ist weniger als doppelt so lang
+  wie der kürzeste
