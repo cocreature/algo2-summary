@@ -1,0 +1,192 @@
+* Bewegungsplanung bei unvollständiger Information
+** Ausweg aus einem Labyrinth
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-1.pdf::1][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-1.pdf]]
+- Labrinth L mit Roboter R mit Tastsensor, Meßgerät für Drehwinkel φ
+  und Fähigkeit Inneres und Äußeres von L zu unterscheiden
+*** Pledge-Strategie
+- Solange R∈L
+- Gehe vorwärts bis R∉L oder Wandkontakt
+- Gehe links der Wand bis ∉L oder φ=0
+*** Hat der Weg von R unendlich viele Kanten K_{1},K_{2},… ist R eingeschlossen
+** Zum Ziel in unbekannter Umgebung
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-1.pdf::5][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-1.pdf]]
+- P_{1},…,P_{n} disjunkte einf. zsh. endl. polygonale Gebiete des ℝ^{2}
+- s,z Start und Ziel ∈ ℝ^{2}\∪_{i=1}^{n} P_{i} =: F
+- R Roboter der zusätzlich wie zuvor, der zusätzlich die eigene Position kennt
+*** Wanze
+- Solangee r ≠ z
+  - laufe in Richtung z bis r=z oder ∃i: r∈P_{i}
+  - Falls r≠z
+    - umlaufe P_{i} und suche ein q∈argmin‖x-z‖_{2}, x∈P_{i}
+    - Gehe zu q
+- Kann Wege erzeugen, die beliebig länger als der kürzeste sind
+*** Steuerworte
+- z: gehe in Richtung z soweit möglich
+- l: gehe links einer Kante bis zu deren Endpunkt
+- r: gehe rechts einer Kante bis zu deren Endpunkt
+*** Universelles Steuerwort
+- Es gibt ein universelles Steuerwort w, dass für alle Startpunkte zum gegebenen Ziel z führt, d.h
+  - w(F):={w(x)|x∈F}={z}
+  - Befehle werten ignoriert, wenn sie nicht anwendbar sind,
+    insbesondere bewegt man sich vom Ziel nicht weg
+- Es reicht also aus einfach alle endlichen Steuerworte zu erzeugen
+**** Beweis
+- Zu den Ecken p_{1},…,p_{m} aller P_{i} wähle sukzessiv Steuerworte w_{1},…,w_{m} sodass
+  - w_{i},…,w_{1}(p_{i})=z
+- w_{m}…w_{1}lz(s)=z ist universelles Steuerwort
+** Das Behälterproblem
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-1.pdf::8][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-1.pdf]]
+- verteile B=(b_1,…,b_m)⊂(0,h] auf möglichst wenige Teilfolgen B_{1}…B_{k} sodass
+  - ∀i=1,…,k: Σ_{B_{i}} ≤ h
+- NP-Hart
+*** First Fit
+- In ersten Behälter der genug Platz hat reinpacken
+*** Kompetitivität
+- P Problem, A korrekter Algorithmus für P, k_{min}(e) und k_{A}(e) Größe der Lösungen bei Eingabe e
+- A ist kompetitiv c-kompetitiv ≔ k_{A} ≤ a+c*k_{min}
+** Türsuche
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-1.pdf::10][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-1.pdf]]
+*** Algorithmus
+- Wähle Erkundungstiefen f_{i}>0 für i∈ℕ
+- i≔1
+- Wiederhole bis Tür gefunden
+  - gehe f_{i} Meter die Wand entlang
+  - kehre Laufrichtung um
+  - gehe f_{i} Meter die Wand entlang
+  - i≔i+1
+*** Beispiele
+- f_{i}≔i
+  - Nicht kompetitiv, da quadratisch
+- f_{i}≔2^i
+  - d≔f_{n}+ε∈(f_{n},f_{n+1}]
+  - L ≔
+    - 2Σ^{n} + d oder
+    - 2Σ^{n+1} + d
+    - < 2*2^{n+2}+d < 8(2^{n}+ε)+d = 9d
+    - 9-kompetitiv
+*** 9 ist optimal
+- Beweis über Matrixiteration
+** Sternsuche
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-1.pdf::15][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-1.pdf]]
+- Halbgeraden H_{1},…,H_{m} die von Startpunkt s ausgehen und Zielpunkt z auf den Geraden
+- H_{i+m}≔H_{i}
+*** Algorithmus
+- Wähle Erkundungstiefen f̲{i}>0 für i∈ℕ
+- i≔1
+- Wiederhole bis z gefunden
+  - gehe f_{i} Meter auf H_{i} entlang und zurück
+  - i≔i+1
+*** Beispiele
+- f_{i}=(m/(m-1))^{i}
+  - c-kompetitiv mit
+  - c≔ $2 m (\frac{m}{m-1})^{m-1}+1$ < 2me+1
+  - optimial
+** Polygonsuche
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-1.pdf::17][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-1.pdf]]
+- P einfach zsh. beschr. polygonales Gebiet mit n Ecken und durch Mauer berandet
+- R Roboter der Koordinaten sichtbarer Punkte mit Sichtsystem bestimmen kann
+- s,z Punkte in P
+** Beispiele
+- n/4 Korridore der Länge 1+ε mit abgewinkelten Spitzen der Länge ε
+  - um z zu finden muss R im schlechtesten Fall alle Korridore ablaufen
+  - Länge des Kompetivitätsfaktor hängt von n ab
+** Lemma
+- Es gibt kürzesten Weg von s nach z in P
+- Er ist polygonal und Ecken sind s,z oder Acken von P
+*** Beweis
+- S(p) Bereich von P der von p aus gesehen werden kann
+- Falls z∈S(s)
+  - sz der kürzeste Weg
+- Falls z∉S(s)
+  - jeder Weg W von s nach z kreuzt eine Kante pq von S(s)
+  - Kante pq zerlegt P in zwei Polygone s∈P_{s} und z∈P_{z}
+  - Wird W bis zum letzten Kreuzungspunkt r durch sr ersetzt, liegt W
+    ab p ganz in P_{z} und entspricht bis p dem kürzesten Weg von s
+    nach z
+  - Analog fortsetzen
+** Baum der kürzesten Wege (BkW) von s zu den Ecken von P
+- m Blätter, dann gilt m≤n
+- Kennt R BkW kann er die m Wege mit Sternsuche ablaufen, bis er z sieht
+- Kompetitvitätsfaktor ∈ O(n)
+* Konvexe Hüllen
+** Dualität
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf::2][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf]]
+- Die Punkte x ≔ [1,x'], x'∈ℝ^{d} bilden einen affinen Raum A^{d}
+- Abgeschlossene Halbräume von A^{d} sind definiert durch
+  - u^{t}x := [u_{0},…,u_{d}][1,x_{1},…,x_{d}]≥0
+  - u bezeichnet Halbraum und x einen seiner Punkte
+  - Halbräume enthalten Ursprung
+    - u_0>0
+    - normiere u sodass u_{0}=1
+  - Halbraum ist eineindeutig durch Koordinatenvektor u≔[1,u'], u'∈ℝ^{d} beschrieben
+  - u^{*} ist der zu u gehörige Halbraum
+- Menge der Halbräume bildet den Dualraum A^{*} von A
+  - Halbraum [1,…,0]^{t} ist Ausnahme, da er den gesamten Raum A enthält
+- x∈u^{*} ↔ u∈x^{*}
+** Konvexe Mengen
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf::3][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf]]
+- Verbindungsstrecke von a und b entspricht den Punkten
+  - x≔a*(1-t)+bt, t∈[0,1]
+- Teilmenge von A heißt konvex wenn sie zu je zwei Punkten auch
+  Verbindungsstrecke enthält
+- a^{*}b^{*} besteht aus Halbräumen mit den Koordinaten x≔a*(1-t}+bt, t∈[0,1]
+- Konvexe Hülle einer Menge M
+  - Schnitt aller konvexen Obermengen
+  - bezeichnet mit [M]
+*** Beispiele
+- Für eine beliebige Punktmenge M⊂A bilden die Halbräume, die M
+  enthalten, eine konvexe Menge im Dualraum
+- Ist M^{*}⊂A^{*} eine Halbraummenge, bilden alle PUnkte, die in allen
+  m^{*}∈M^{*} enthälten sind eine konvexe Menge im Primalraum A
+** Konvexe Polyeder
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf::6][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf]]
+- Konvexes Polyeder P⊂A ist Schnitt endlich vieler Halbräume u_{1}^{*},…,u_{n}^{*}∈A^{*}
+- Rand einer beliebigen Menge M wird mit ∂M bezeichnet
+- die planaren Teile von ∂P bilden die Facetten von P
+- jede Facette von P liegt auf Rand eines halbraums u_{i}^{*} (Facettenhalbraum (FHR))
+- Benachbarte Facetten schneiden sich in den Kanten von P
+- Endpunkte liegen auf mindestens 3 Facetten und bilden Ecken/Extrempunkte von P
+*** Konvexes Polyeder P ist konvexe hülle K seiner Eckenmenge
+*** Halbräume die konvexes Polyeder P enthälten, bilden konvexe Hülle K^{*} der FHRe von P
+*** Folgerung
+- Ist P konvexes Polyeder mit Ecken p_{1},…,p_{e} und den FHRen
+  u_{1}^{*},…,u_{f}^{*} hat die Menge
+  - U^{*}:={u^{*}|u^{*}⊃P}⊂A^{*} die Ecken u_{1}^{*},…,u_{f}^{*} und die FHRe p_{1},…,p_{e}
+- Dual: U≔{u|u^{*}⊃P}⊂A hat die Ecken u_{i} und die FHRe p_{i}^{*} hat
+- Polyeder P und U⊂A heißen dual zueinander
+** Beziehungen zwischen Knoten, Kanten, Facetten
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf::10][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf]]
+- plangraph stuff
+** Datenstruktur für Netze
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf::12][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf]]
+Für jede Ecke p
+- Koordinaten von p
+- Listen von Zeigerpaaren
+  - 1. Zeiger weißt im Gegenuhrzeigersinn (GUS) geordnet auf alle Nachbarn von p
+  - sind p,q,r im GUS geordnete Nachbarn einer Facette und weist
+    der 1. Zeiger eines Paares auf q, zeigt der 2. Zeiger indirekt auf
+    r, Er weist auf das Zeigerpaar von q, dessen 1. Zeiger auf r weist
+** Algorithmus konvexe Hülle
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf::14][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf]]
+- Grob
+  - Verschiebe
+  - U_{i}←p_{1}^{*}∩…∩p_{4}^{*}
+    - Für i=5,…,n
+      - Falls U_{4}⊂p_{i}^{*}
+        - Markiere p_{i} als gelöscht
+      - Sonst
+        - Verknüpfe p_{i} bidirektional mit einem Knoten von U∉p_{i}^{*}pp (hier u_{i} genannt)
+  - Für i=5,…,n
+    - U_{i}←U_{i-1}∩p_{i}^{*}
+      - für i=5,…,n, wenn p_{i} unmarkiert
+        - Suche Eckenmenge Q_{i}≔{q_{1},…,q_{k}} von U_{i-1}∩∂p_{i}^{*}
+        - U_{i} ← U_{i-1} + Facette Q_{i}
+        - Löschen von U_{i}, was ∉ p_{i}^{*}
+          - Dabei Datenstruktur updaten
+  - Dualisiere und verschiebe wieder
+** Aufwand des Algorithmus „Konvexe Hülle“
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf::17][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-2.pdf]]
+- Reihenfolge der p_{i} gleichverteilt zufällig
+- Jede Ecke hat Knotengrad 3 (Mehrfachpunkte und degenerierte Kanten, falls das nicht der Fall ist)
+- O(nlogn) erwartet
+- Asymptotisch O(n^2)
