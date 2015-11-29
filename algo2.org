@@ -247,3 +247,115 @@ Für jede Ecke p
 ** kürzeste Rundreise
 - Rundweg um einen minimalen Spannbaum ist weniger als doppelt so lang
   wie der kürzeste
+* Stationäre Unterteilung für Kurven
+- stationär, weil immer derselbe Unterteilungsoperator verwendet wird
+** Kardinale Splines
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-4.pdf::6][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-4.pdf]]
+*** Kardinale B-Splines vom Grad n
+- N^{0}(u)≔{1, u∈[0,1), 0, sonst
+- N^{n}(u)≔ integral_{-∞}^{u} N^{n-1}(t) - N^{n-1}(t-1) dt
+          = integral_{u-1}^{u} N^{n-1}(t) dt
+**** Eigenschaften
+- N^{n}(u){ =0, u∉[0,n+1), >0, u∈(0,n+1)
+- N^{n} hat den Träger supp N^{n}=[0,n+1]
+- Translate N^{n}_{i}(u)≔N^{n}(u-i), i∈ℤ bilden eine nicht negative
+  Zerlegung der Eins
+*** Kardinalspline
+- s(u):=Σ_{i∈ℤ} c_{i}N_{i}^{n}(u) : ℝ→ℝ^{d} heißt Kardinalspline
+- c_{i} sind Kontrollpunkte und bilden die Ecken des Kontrollpolygons
+- Spline ist Konvexkombination seiner Kontrollpunkte:
+  - Für u∈[i+n,i+n+1) liegt s(u)≔Σc_{i}N_{i}^{n}(u) in der konvexen
+    Hülle von c_{i},…,c_{i+n}
+- s' = Σ_{i∈ℤ} c_{i}(N_{i}^{n-1}-N_{i+1}^{n-1}) = Σ_{i∈ℤ} ∇c_{i}N_{i}^{n-1}
+  - ∇c_{i} = c_{i}-c_{i-1}
+** Lane-Riesenfeld Algorithmus
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-4.pdf::9][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-4.pdf]]
+- Spline s≔Σc_{i}N_{i}^{n} kann als Linearkombination der skalierten
+  Translate N_{i}^{n}(2u)=N^{n}(2u-i) dargestellt werden
+  - s(u)=Σ_{i∈ℤ} c_{i}^{1}N^{n}(2u-i)
+*** Algorithmus
+- Für i∈ℤ verdopple
+  - d_{i}^{0} ← c_{floor(i/2)}
+- Für k=1,…,n
+  - Für i∈ℤ mittele
+    - d_{i}^{k}←½(d_{i-1}^{k-1} + d_{i}^{k-1})
+- Für i∈ℤ
+  - c_{i}^{1}←d_{i}^{k}
+*** Iterieren
+- s(u)=Σ c_{i}^{k} N_{i}^{n} (2^{k} u - i)
+  - c_{i}^{k} werden aus den c_{i}^{k-1} sowie die c_{i}^{1} aus den
+    c_{i} berechnet werden
+** Konvergenz bei L.-R.-Unterteilung
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-4.pdf::12][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-4.pdf]]
+- Unterteile s(u)≔Σ_{i∈ℤ} c_{i}^{0} N^{n}(u-i)
+- erhalte s(u)=Σ_{i∈ℤ} c_{i}^{k} N^{n}(2^{k}u-i)
+- Kontrollpolygone c_{k}≔(…,c_{-1}^{k},c_{0}^{k},c_{1}^{k},…)
+- Die Kanten der Kontrollpol. werden durch einen Verdopplungsschritt
+  mit Mittelungsschritt halbiert und bei weiteren Mittelungen nicht
+  länger
+- Somit gilt für die maximalen Kantenlängen
+  - h_{k} ≔ sup_{i∈ℤ} ‖∇c_{i}^{k}‖_{2}
+  dass
+  - h_{k}≤1/2h_{k-1}≤…≤1/(2^{k}) h_{0}
+- Durchmesser konvexer Hüllen n+1 adjazenter c_{i}^{k} lassen sich durch
+  - n*h_{k} ∈ O(2^{-k})
+- Somit konvergieren die Kontrollpolygone von s gegen den Spline s
+** Unterteilungsmatrizen
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-4.pdf::14][/home/moritz/docs/studium/algo2/Algo-2-Kapitel-4.pdf]]
+- Drücke LR-Algorithmus durch Matrizen und symbolische Polynomprodukte aus
+- skalarwertiges Polygon c≔[…,c_{-1},c_{0},c_{1},…] ∈ ℝ^{ℤ}
+- Verdoppeln d≔Dc≔ (Matrix doppelter Höhe mit jeweils 2 Einsen pro Spalte) c
+- Mitteln Md≔½ 1/2 (quadratische Matrix mit je zwei Einsen pro Reihe, die sich überlappen ) d
+- Matrizen sind biinfinit
+- Im 1. LR-Schritt M^{n}Dc für Grad n und in m Schritten U^{m}_{n}c,
+  wobei U_{n}≔M^{n}D
+- Unterteilungsmatrizen U_{n} n∈ℕ_{0} stellen den LR-ALgorithmus dar
+  und können durch n-fache Mitteilungen der Spalten von D berechnet
+  werden
+- [[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Kapitel-4.pdf::16][Unterteilungsgleichung]]
+- b_{i}=Σ_{k∈ℤ}α_{i-2k} c_{k}, i∈ℤ
+  - α sind die Einträge der Spalten von U_{n} die jeweils immer um 2 Verschoben sind
+  - b entspricht U_{n}c
+** Das Symbol
+- Darstellung der Folgen b,a,c durch symbolische Polynome
+  - b(z) ≔ Σ_{i∈ℤ} b_{i} z^{i}
+  - analog für α und c
+- Unterteilungsgleichung über Polynome b(z)=α(z)c(z^{2})
+- Verallgemeinerung indem α(z) durch ein beliebiges Polynom ersetzt wird
+- α(z) heißt Symbol des Unterteilungsalgorithmus
+- Für LR α_{n}(z)≔1/(2^{n}) (1+z)^{n+1}
+- Dopplungsmatrix: α_{0}(z) ≔ 1+z
+- Mittelungsmatrix: μ(z) ≔ 1/2 (1+z)
+** Differenzenschema
+- c≔c_{ℤ}≔(c_{i})_{i∈ℤ} Kontrollpolygon
+- ∇c_{i} bilden das Differenzenpolygon
+  - ∇c ≔ (∇c_{i})_{i∈ℤ}
+  - Differenzenoperator ist auch als Matrix mit -11 pro Reihe darstellbar
+  - Symbol ∇(z) ≔ 1-z
+- c_{∇}(z)≔Σ_{i∈ℤ}(c_{i}-c_{i-1}) z^{i} = (1-z) c(z) = v(z) c(z)
+- Für
+  - α(z) Symbol eines bel. stat. UAalg
+  - b(z)≕α(z)c(z^{2})
+  - Folgt
+    - b_{∇}(z)=α(z)/(1+z) * c_{∇}(z^{2})
+    - Differenzen können aus Differenzen des Ursprünglichen Polygons
+      berechnet werden mit β(z)≔α(z)/(1+z)
+    - β(z) heißt Differenzenschema zu α(z)
+      - Existiert nur, wenn α(z) den Faktor (1+z) hat
+** Konvergenz
+- c^{m}(z)≔ α(z) * c^{m-1}(z^{2})
+- Folge der Polygone c^{m} heißt konvergent, wenn die stückweise linearen Splines
+  - Σ_{k∈ℤ} c_{k}^{m} N_{k}^{1}(2^{m} u) gleichmäßig gegen eine stetige Konvergenz f(u) konvergieren
+- Unterteilungsalgorithmus α(z) heißt konvergent, falls für alle c^{0}(z) die Polygonfolge (c^{m})_{m∈ℕ} konvergent ist
+- α heißt Nullschema, falls alle diese Folgen c^{ℕ} gegen f(u)≡0 konvergieren
+- α heißt c^{r}-Schema, wenn alle Folgen c^{ℕ} gegen eine Funktion ∈ C^r konvergieren
+- Im folgenden sind fast alle Koeffizienten von α = 0
+*** Lemma
+- Ist α(z) Symbol eines konvergenten Schemas gilt
+- Σ_{j∈ℤ} α_{2j}=1
+*** Satz
+- Unterteilungsalgorithmus α ist konvergent gdw sein Differenzenschema Nullschema ist
+*** Satz
+- Unterteilungsalgorithmus α mit Differenzenschema β ist C^{1}-Schema, falls das Ableitungschema 2β konvergent ist
+- Ist α ein C^{1}-Schema und konvergieren die Polygone c^{m}(z)=α(z)c^{m-1}(z^{2}) gegen f(u)
+  konvergieren die skal. Diff.polygone 2^{m}(∇c_{i}^{m})_{i∈ℤ} gegen f'(u)
