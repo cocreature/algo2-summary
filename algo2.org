@@ -359,3 +359,60 @@ Für jede Ecke p
 - Unterteilungsalgorithmus α mit Differenzenschema β ist C^{1}-Schema, falls das Ableitungschema 2β konvergent ist
 - Ist α ein C^{1}-Schema und konvergieren die Polygone c^{m}(z)=α(z)c^{m-1}(z^{2}) gegen f(u)
   konvergieren die skal. Diff.polygone 2^{m}(∇c_{i}^{m})_{i∈ℤ} gegen f'(u)
+* Unterteilungsalgorithmen für Flächen
+** Tensorprodukt-Unterteilungsalgorithmen
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Skript-86-87.pdf::1][/home/moritz/docs/studium/algo2/Algo-2-Skript-86-87.pdf]]
+- C≔ [c_{ij}]_{i,j∈ℤ} beschreibt regelmäßiges biinfinites Vierecksnetz
+- U und V Matrizen zweier stationärer Unterteilungsalgorithmen für Kurven
+- Kontrollnetz B≔b_{ℤ^{2}}≔UCV^{t} indem alle Spalten von C mit U und dann alle Zeilen von UC mit V unterteilt werden
+- (U,V) heißt Tensorproduktunterteilungschema (TEPUS)
+- U^{m}C(V^{t})^{m} konvergieren gegen eine C^{r}-Fläche wenn U und V C^{r} konvergent sind
+** Symbole
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Seiten87-94.pdf::1][/home/moritz/docs/studium/algo2/Algo-2-Seiten87-94.pdf]]
+- Matrix C=c_{ℤ^{2}} hat Symbol
+  - c(x)≔c(x,y)≔Σ_{i∈ℤ} Σ_{j∈ℤ} c_{ij} x^{i} y^{j} ≔ Σ_{i∈ℤ^{2}} c_{i} x^{i}
+- Sind U,V stationaler U-Alg mit Symbolen α(x), β(y) hat B≔b_{ℤ^{2}}≔UCV^{t} das Symbol
+  - b(x,y)≔α(x)c(x^{2},y^{2})β(y)
+- γ(x,y)≔α(x)β(y) ist Symbol des Tepus und Unterteilungsgleichung ist
+  - b(x)=γ(x)c(x^{2})
+  - Ausmultiplizieren: b_{i}=Σ_{k∈ℤ^{2}} γ_{i-2k} c_{k}
+- Auch wenn γ(x,y) kein Produkt von Symbolen ist, stellt γ einen stationären U-Alg dar
+** Masken
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Seiten87-94.pdf::4][/home/moritz/docs/studium/algo2/Algo-2-Seiten87-94.pdf]]
+- Γ≔[γ_{j}]_{j∈ℤ^{2}} Koeffizientenmatrix einer Unterteilungsgleichung
+  - b_{i}=Σ_{k∈ℤ^{2}} γ_{i-2k} c_{k}
+  - Nur 1/4 aller γ_{j} treten auf, diese bilden Teilmatrix
+    - Γ_{i} ≔ [γ_{i-2k}]_{k∈ℤ^{2}}
+    - Entspricht bis auf Indexverschiebungen einer der 4 Teilmatrizen Γ_{00},Γ_{10},Γ_{01},Γ_{11}
+- Die 4 Teilmatrizen bilden eine Zerlegung von Γ und heißen Masken des U-Alg γ
+- Spiegelung: [γ'_{k}]_{k∈ℤ^{2}] ≔ Γ_{i}
+  - γ'_{k}=γ_{i-2k}
+- b_{i}=Σ_{k∈ℤ^{2}} γ'_{k} c_{k} ist gewichtete Produktsumme, die
+  graphisch dargestellt wird indem Gewichte γ'_{k} an Punkte c_{k}
+  geschrieben werden
+- Graphik [[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Seiten87-94.pdf::5][/home/moritz/docs/studium/algo2/Algo-2-Seiten87-94.pdf]]
+- b_{i}≔Σ_{k∈ℤ^{2}} γ_{i-rk}c_{k} definiert r-näres Unterteilungschema mit r^{2} Masken
+** Konvergenz
+[[pdfview:/home/moritz/docs/studium/algo2/Algo-2-Seiten87-94.pdf::6][/home/moritz/docs/studium/algo2/Algo-2-Seiten87-94.pdf]]
+- C≔(C^{m})_{m∈ℕ_{0}} Folge von regelmäßigen Vierecksnetzen mit Symbolen
+  - c^{m}(x)≔Σ_{k∈ℤ^{2}} c_{k}^{m} x^{k} mit UGL
+  - c^{m}(x)=γ(x)c^{m-1}(x^{2}), wobei
+  - γ(x)≔Σ_{j∈ℤ^{2}} γ_{j}x^{j} und fast alle γ_{j}=0
+- C heißt konergvent, falls die stückweise bilinearen Splines
+  - s_{m}(x,y)≔Σ_{i,j∈ℤ} c_{ij}^{m} N_{i}^{1}(2^{m}x)
+    N_{j}^{1}(2^{m}y) über jedem kompakten Gebiet gegen eine stetige
+    Limesfläche s_{∞} konvergieren
+  - Ist s_{∞}∈C^{r} heißt C C^{r}-konvergent
+  - Für s_{∞}=0  heißt C 0-konvergent
+- Binäres Schema γ heißt C^{r}-konvergent, wenn Netzfolge C für jedes Ausgangsnetz C^{0} C^{r}-konvergent ist
+  - Konvergent, wenn C^{0}-konvergent
+  - Nullschema, wenn C für jedes C^{0} Nullfolge ist
+- Ist γ konvergent und kein Nullschema, gilt für alle i∈ℤ^{2}
+  - Σ_{k∈ℤ^{2}} γ_{i-2k}=1
+- ∇_{1} c_{ij} ≔ c_{ij} - c_{i-1,j}
+- ∇_{2} c_{ij} ≔ c_{ij} - c_{i,j-1}
+- ∇_{k}^{r} c_{ij} ≔ ∇_{k} ∇_{k}^{r-1} c_{ij}, k=1,2
+*** Satz
+Wenn für r,s∈ℕ_{0} mit r+s=k+1 das Netz der Differenzen
+  ∇_{1}^{r} ∇_{2}^{s} c_{i}^{m}, i∈ℤ^{2}
+für m→∞ eine Nullfolge bildet, ist γ ein C^{k}-Schema
