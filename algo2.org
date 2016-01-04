@@ -501,3 +501,197 @@ Für k=m-1,…,0
 Siehe Folien
 **** Bemerkung
 - Zerlegung kann in Quadtree abgespeichert werden
+* Flussmaximierung
+** Flussnetzwerke
+- Flußnetzwerk (G,q,s,k) besteht aus:
+  - gerichtetem Graph G=(V,E) mit E⊂V^{2}
+  - Quelle q∈V, Senke s∈V
+  - Kapazitätsfunktion k:V^{2}→ℝ_{≥0}
+    - ∀e∈V^{2}\E: k(e)=0
+- Annahme: Für jeden Knoten x∈V gibt es einen Weg q→x→s in G
+  - Also ist |E|≥|V|-1 und G zusammenhängend
+- Fluß in Flußnetzwerk ((V,E),q,s,k) ist Funktion f:V^{2}→ℝ mit den Eigenschaften
+  1. f ≤ k
+  2. ∀x,y∈V: f(x,y) = -f(y,x)
+  3. ∀x∈V\{q,s}: Σf(x,V) ≔ Σ_{y∈V} f(x,y)=0.
+- Sei f ein Fluß im Netzwerk und sei
+  V = Q∪S mit q∈Q, s∈S Zerlegung von V
+  Dann heißt w_{f} ≔ Σ f(q,V) Wert von f und (Q,S) ein Schnitt von F
+- Es gilt w_{f}=Σ f(Q,S) ≤ Σ k(Q,S)
+** Ford-Fulkerson-Methode
+- G=(V,E) gerichteter Graph und F≔(G,q,s,k) Flußnetzwerk mit einem Fluß f
+*** Definition
+- Kanten e∈V^{2} für die f(e)<k(e) bilden den Residualgraph G_{f} mit der kantenmenge E_{f}
+- Residualkapazität ist k_{f}≔k-f
+- F_{f} ≔ (G_{f},q,s,k_{f}) bezeichnet das residuale Netzwerk
+*** Ford-Fulkerson
+Eingabe: F
+Ausgabe: Max. Fluß f
+f ← 0
+Solange es einen Weg q→s in G_{f} gibt, erhöhe f maximal über diesem Weg
+*** Satz 1
+Terminiert Ford-Fulkerson ist f, d.h. w_{f} maximal
+**** Beweis
+- Terminiert der Algorithmus gibt eis keinen Pfad q→ in G_{f}
+- Somit liegt s nicht in Q≔{x∈V|∃ Weg q→s in G_{f}}
+- Also bilden Q und s≔V\Q einen Schnitt von F
+- Da f=k über QxS folgt nach 6.1 Lemma für jeden Fluss g von F
+  W_{g}=w_{f} also ist f maximal
+*** Satz 2
+Ford fulkerson terminiert wenn k(V^{2}⊂ℕ_{0}, da
+- w_{f} immer um mindestens 1 erhöht wird
+- w_{f} = Σf(q,V) ≤ Σ k(q,V) ≤ ∞
+*** Folgerung
+- Ist K(V^{2})∈ℕ_{0} und W der Wert eines maximalen Flusses von F folgt
+Aufwand(Ford-Fulkerson)∈O(|E|W) denn mithilfe einer Breitensuche kann Pfad q→s in ≤2|E| Schritten gefunden werden
+*** Bemerkung
+** Edmonds-Karp-Algorithmus
+- Erhöht man in Ford-Fulkerson immer längs eines kürzesten Pfades q→s in G_{f} erhält man den Edmonds-Karp-Algorithmus
+*** Lemma
+- Sei f_{i} der im i-ten Schritt des Edmonds-Karp-Algorithmus erzeugte
+  Fluss und sei l_{i}(x) die Länge der kürzesten Pfade q→x im
+  Residualgraph G_{i}≔(V,E_{i})≔G_{f_{i}}, dann gilt l_{i}≤l_{i+1}
+**** Beweis
+Zeige l_{1}(y)≤l_{2}(y)
+
+Vollständige Induktion über l_2(y):
+Induktionsanfang:
+l_{2}(y)=0 → y=q → l_{1}(y)=0 ≤ l_{2}(y)
+
+Induktionsschritt:
+Fall 1: (x,y)∈E_{1}:
+- l_{1}(y)≤l_{1}(x}+1)≤l_{2}(x+)1 (nach IV) = l_{2}(y)
+Fall 2: (x,y)∉E_{1}
+(x,y)∈E_{2}
+- f_{1} wurde auf der Gegenkante erhöht
+**** TODO wat
+*** Aufwand
+O(|E|^{2}|V|)
+** Präfluss-Push-Algorithmen
+*** Definition
+- Präfluss eines Flussnetzwerkes F≔(G,q,s,k) mit G≔(V,E) ist eine Funktion
+f:V^{2}→ℝ
+mit den Eigenschaften
+(1) f≤k
+(2) ∀x,y∈V: f(x,y)=-f(y,x)
+(3) ∀x∈V\{q} ist der Überschuss Ü(X)≔Σf(V,x)>=0
+
+Weiter ist h:V→ℕ_{0} eine Höhenfunktion im Residualnetzwerk F_{f}, falls
+(4) h(q)=|V|
+(5) h(s)=0
+(6) ∀(x,y)∈Σ_{f}:h(x)-h(y)≤1
+- Präfluss-Push-Algorithmus führt Push und Lifte solange wie möglich in
+  beliebiger Reihenfolge aus
+*** Push(x,y)
+d ← min{ü(x), k_{f}(x,y)}
+f(x,y) ← f(x,y)+d
+ü(x)←ü(x)-d
+ü(y)←ü(y)+d
+**** Erlaubt wenn
+x∈V\{q,s}
+h(x)-h(y)=1
+ü(x)>0 und (x,y)∈E_{f}
+*** Lifte(x)
+h(x)←1+min_{(x,y}∈E_{f}} h(y)
+**** Erlaubt wenn
+x∈V\{q,s}
+ü(x)>0 und h(x)≤min_{x,y}∈E_{f} h(y)
+*** Präfluss-Push-Methode
+Eingabe: Flussnetzwerk F≔((V,E),q,s,k)
+Ausgabe: Ein max. Fluss f in F
+
+Für alle x,y∈V
+  h(x) ← {|V|, x=q, 0 sonst
+  f(x,y) ← { k(x,y), x=q, 0 sonst
+
+Solange es eine erlaubte Push- oder Lifte-Operation gibt führe eine
+beliebige solche aus
+** Korrektheit der Präfluss-Push-Methode
+*** Lemma
+- Während eines Präfluss-Push-Algorithmus ist h immer eine Höhenfunkiton
+**** Beweis
+- Initial passt, weil alle Kanten gesättigt sind und nicht zu G_{f} gehören
+- Erlaubtes Lifte(X) erhält die Höhenfunktionseigenschaften für alle
+  ein- und ausgehenden Kanten von x
+- Erlaubtes Push(x,y) kann (x,y) sättigen, d.h. aus E_{f} entfernen
+  und/oder die "bergaufführend" Kante (y,x) zu E_{f}
+  hinzufügen. Beides erhält die Höhenfunktionseigenschaften.
+*** Satz
+- Terminiert Präfluss-Push ist f maximaler Fluß
+**** Beweis
+(a) ist f kein Fluß, existiert ein x∈↦V\{q,s} mit ü(x)>0
+Somit gibt es eine kante (y,x) für die f(y,x)>0.
+Folglich ist k_{f}(x,y)>0 und es ist entweder Push(x,y) oder Lifte(x) erlaubt.
+Algorithmus kann also nur mit Fluss terminieren.
+(b) Für einen Paf q→x der Länge φ in G_{f} gilt wegen 6.4(6) h(x)≥h(q)-φ=|V|-φ
+Da ein schleifenloser Pfad die Länge p<|V| hat, haben alle x, die von q aus erreichbar sind, eine Höhe ≥1.
+Es gibt also keinen Pfad q→s in G_{f}.
+Terminiert der Algorithmus, ist f wegen 6.2 Satz 1 maximal.
+** Aufwand von Präfluss-Push
+- Sei G≔(V,E) ein gerichteter Graph und F≔(G,q,s,k) ein Flussnetzwerk
+  mit einem Präfluss f und einer Höhenfunktion h.
+- Menge der Knoten zu denen von q aus ein positiver Fluß fließt
+  - A≔{x∈V|∃ Pfa q→x in G, über dem f>0}∪{q}}
+  und B≔V\A
+*** TODO sorry too boring
+O(|V|^{2}|E|)
+** Komplette Leerungen
+*** Definition
+- y heißt Nachbar von x, falls (x,y) oder (y,x)∈E
+- Grad(x) ist die Zahl der Nachbarn von x
+- n_{x}(1),…,n_{x}(Grad(x)) bezeichnet die Nachbarn von x
+- Kante (x,y)∈V^{2} heißt pushbar, falls (x,y)∈E_{f} und h(y)-h(x)=-1.
+
+(*) i_{x} sei so, dass (x,y) für y=n_{x}(1),…,n_{x}(i_{x}-1) nicht
+pushbar ist, z.B. i_{x}=1
+*** Leere(x)
+Solange Ü(x)>0
+  Falls i_{x} ≤ Grad(x)
+    y ← n_{x}(i_{x})
+    Falls (x,y) pushbar
+      Push(x,y)
+    sonst i_{x} ← i_{x}+1
+  sonst Lifte(X)
+    i_{x} ← 1
+*** Lemma
+Leere(y) hat die Invariante (*) für y=x und
+*** TODO Beweis
+*** Folgerung
+- Präfluss-Push kann so organisiert werden
+Initialisiere f und h wie in 6.4
+i_{x} ← für alle x⊂V
+solange es ein x∈V\{q,s} gibt mit ü(x)>0, Leere(x)
+** Der Spitzen-Algorithmus
+ (move-to-front algorithm)
+
+F,f,h wie bisher definiert
+- Pushbaren Kanten von F_{f} einen gerichtenen azyklischen Graphen (gaG)
+- Liste L aller x∈V\{q,s}, die folgende Eigenschaft besitzt:
+(*) x steht vor y, falls (x,y) pushbar ist.
+*** Bemerkungen
+- Wird ein PUsh(x,y) ausgeführt behält L die Eigenschaft (*), denen (y,x) bleibt unpushbar, da h(y)<h(x)
+- Wird Lifte(y) ausgeführt, werden pushbare Kanten (x,y) unpushbar, da
+  h(y)-h(x)=-1 nicht mehr gilt und unpushbare Kanten (y,z) eventuell
+  pushbar werden. Setzt man y dann an die Spitze von L behält L die Eigenschaft (*)
+- Gilt (*) pusht Leere nur zu Nachfolgern in L
+*** Folgerung
+- Setzen wir geleerte und geliftete Knoten immer an den Anfang von L
+  und leeren dann der Reihe nach die nachfolgenden Knoten, bis wieder
+  geliftet wird, gibt es keinen Überschuss mehr, wenn wir das Ende von
+  L erreicht und geleert haben. Somit ist f maximaler Fluss.
+*** An die Spitze
+Eingabe: F
+Ausgabe: max. Fluss
+
+Initialisiere f und h wie in Präfluss-Push
+∀x∈V: i_{x} ← 1
+Generiere L
+x ← Kopf(L)
+Solange x ≠ Nil
+  h_{alt} ← h(x)
+  Leere(x)
+  Falls h_{alt} < h(x): Setze x an die Spitze von L
+  x ← Nachfolger von x in L
+** Aufwand von An die Spitze
+*** TODO: begründung
+O(|V|^{3})
