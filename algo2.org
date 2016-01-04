@@ -416,3 +416,88 @@ Für jede Ecke p
 Wenn für r,s∈ℕ_{0} mit r+s=k+1 das Netz der Differenzen
   ∇_{1}^{r} ∇_{2}^{s} c_{i}^{m}, i∈ℤ^{2}
 für m→∞ eine Nullfolge bildet, ist γ ein C^{k}-Schema
+** Verallgemeinerungen
+*** Dreiecksnetze
+- Unterteilungsalgorithmen für regelmäßige Dreiecksnetze können als
+  Unterteilungsalgorithmen für regelmäßige Vierecknetze aufgefasst
+  werden
+*** Vierecksverfeinerung
+- Unterteilt man jede Facette eines beliebigen Netzes N indem man ihre
+  Mittelpunkte mit denen ihrere Kanten verbindet, erhält man ein
+  Vierecksnetze R_□N wobei R_□ den Vierecksverfeinerungsoperator
+  bezeichnet
+*** Dreiecksverfeienerung
+- Unterteilt man jedes Dreieck eines Dreiecksnetz uniform in 4 gleiche
+  Dreiecke erhält man das Netz R_ΔN wobei R_Δ den
+  Dreiecksverfeinerungsoperator bezeichnet
+*** Mittelungsoperator A
+- AN ist das zu N duale Netz, dessen Ecken die Facettenmittelpunkte vno N sind
+*** Vierecksmittelpunktschema
+- gegeben durch M_{n,□} ≔ A^{n-1} R_□
+- Für ein beliebiges Netz N konvergiert die Folge (M_{n,□}^{m}
+  N)_{m∈ℕ} gegen eine C^{1}-Fläche und für regelmäßige Vierecknetze
+  entspricht M_{n,□} dem Lane-Riesenfeld-Tepus (U_{n},U_{n})
+*** Dreiecksmittelungschema
+- gegeben durch M_{n,Δ}≔A^{n-1}R_{
+- Für ein beliebiges Netz N konvergiert die Folge (M_{n,□}^{m}
+  N)_{m∈ℕ} gegen eine C^{1}-Fläche . Für beliebig große n und
+  Ausnahmepunkte der Fläche vom Grad 3, ist dies bislang allerdings
+  noch nicht bewiesen worden (wtf)
+** Haar-Wavelets
+- Idee: Umdrehen des Lane-Riesenfeld-Algorithmus U_{0}
+- Sei s(u)≔ Σ_{i=0}^{2^{m}-1} c_{i}^{m} N_{i}^{0}(2^{m}u) ein stückweise konstanter Spline über [0,1]
+- m-mal mitteln und dabei die enstehenden Fehler berechnen
+*** Zerlegung
+Für k = m-1,…,0
+  Für i=0, …, 2^{k}-1
+    c_{i}^{k} ← 1/2 (c_{2i}^{k+1} + c_{2i+1}^{k+1})
+    d_{i}^{k} ← 1/2 (c_{2i}^{k+1} - c_{2i}^{k+1})
+
+- Spline s kann aus c_{0}^{0} und den Detailkoeffzienten zurück gewonnen werden
+*** Rekonstruktion
+Für k=0,…,m-1
+  Für i=0,…,2^{k}-1
+    c_{2i}^{k+1} ← c_{i}^{k} + d_{i}^{k}
+    c_{2i+1}^{k+1} ← c_{i}^{k} - d_{i}^{k}
+
+Sind alle d_{i}^{k} = 0, entspricht die Rekonstruktion dem Lane-Riesenfeld-Algorithmus U_{0}
+*** Definition
+- Zerlegung lässt sich mit Hilfe der Grundfunktionen
+  B_{i}^{k}(u) ≔ N_{i}^{0}(2^{k}u)
+und Wavelets
+  W_{i}^{k} ≔ B_{2i}^{k+1}-B_{2i+1}^{k+1}
+beschreiben
+Es gilt
+s = Σ_{i=0}^{2^{m-1}-1} (c_{i}^{m-1} B_{i}^{m-1} + d_{i}^{m-1} W_{i}^{m-1})
+woraus die Wavelet-Zerlegung folgt
+s = c_{0}^{0}B_{0}^{0} + Σ_{i=0}^{2^{0}-1} d_{i}^{0} W_{i}^{0} + …
+  + Σ_{i=0}^{2^{m-1}-1} d_{i}^{m-1} W_{i}^{m-1}
+*** Bemerkung
+- Wavelet-Zerlegung hat wie B-Spline-Darstellung 2^{m} Koeffizienten
+- Bezigülich des L_{2}-Skalarprodukts <f,g>≔sqrt(integral_{0}^{1}
+  f(x)g(x) dx) sind B_{0}^{0} und die 2^{k}W_{i}^{k} orthonormal
+*** Folgerung
+- Weglassen der kleinsten δ_{i}^{k} ≔ 2^{-k} d_{i}^{k}
+ führt zu guter Komprimierung
+*** 2D-Wavelet-Zerlegung
+- Grauwertbild wird durch einen stückweise konstanten Spline
+s(x,y) ≔ Σ _{i,j=0}^{2^{m}-1} c_{ij}^{m} B_{i}^{m}(x) B_{j}^{m}(y)
+über [0,1)^{2} dargestellt
+- Seine Waveletzerlegung ergibt sich indem wir die Koeffizientenmatrix
+C ≔ [c_{ij}^{m}]_{i,j=0}^{2^{m}-1}
+abwechselnd zeilen- und spaltenweise zerlegen
+Für m=1 erhält man die Matrix
+[c_{00}^{0} d_{00}^{0}] ≔ A^{t} [c_{00}^{1} c_{10}^{1}] A
+[e_{00}^{0} f_{00}^{0}]         [c_{01}^{1} c_{11}^{1}]
+
+mit A=[1/2  1/2] und für allgemeine m zerlegen und rekonstruieren wir so
+      [1/2 -1/2]
+**** Zerlegung^{2}
+Für k=m-1,…,0
+  Für i,j=0,…,2^{k}-1
+    [c_{ij}^{k} d_{ij}^{k}] ← A [c_{2i,2j}^{k+1}   c_{2i+1,2j}^{k+1}]
+    [e_{ij}^{k} f_{ij}^{k}]     [c_{2i,2j+1]^{k+1} c_{2i+1, 2j+1}^{k+1}]
+**** Rekonstruktion
+Siehe Folien
+**** Bemerkung
+- Zerlegung kann in Quadtree abgespeichert werden
